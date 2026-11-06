@@ -237,3 +237,10 @@ button[data-mj="sidebar-collapse"][aria-label="arrow_left"] {
   mix-blend-mode: screen !important;
   pointer-events: none !important;
 }
+
+
+/* Keep the fixed sidebar icon clear of the header logo */
+[data-mj="logo"].app-ltr-1cg87ht {
+  box-sizing: border-box !important;
+  padding-left: 58px !important;
+}
