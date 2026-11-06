@@ -211,3 +211,29 @@ button[data-mj="sidebar-collapse"][aria-label="arrow_left"] {
 .sl-icon.app-ltr-45fs6o {
   color: #606A7C !important;
 }
+
+
+/* Sidebar collapse icon replacement */
+[data-mj="sidebar-collapse"][aria-label="arrow_left"][name="arrow_left"] {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  color: transparent !important;
+  background: transparent !important;
+}
+
+[data-mj="sidebar-collapse"][aria-label="arrow_left"][name="arrow_left"] > svg {
+  display: none !important;
+}
+
+[data-mj="sidebar-collapse"][aria-label="arrow_left"][name="arrow_left"]::before {
+  content: "" !important;
+  display: block !important;
+  width: 24px !important;
+  height: 24px !important;
+  background: url("https://cdn.jsdelivr.net/gh/Narek1990/youcanwin@main/assets/sidebar-collapse.png") center / contain no-repeat !important;
+  filter: invert(1) !important;
+  mix-blend-mode: screen !important;
+  pointer-events: none !important;
+}
