@@ -326,3 +326,11 @@ button[data-mj="sidebar-collapse"][aria-label="arrow_left"] {
 [data-mj="sidebar-nav-list"] > li.app-ltr-10a4mqi {
   background: transparent !important;
 }
+
+
+/* Product widget mounted at the top of page content */
+[data-youcan-product-widget-mount="page-top"] {
+  display: block !important;
+  width: 100% !important;
+  margin: 0 0 16px !important;
+}
