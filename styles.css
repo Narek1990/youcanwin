@@ -261,3 +261,15 @@ button[data-mj="sidebar-collapse"][aria-label="arrow_left"] {
     margin-top: 60px !important;
   }
 }
+
+
+/* Desktop-only banner adjustments */
+@media (min-width: 768px) {
+  [data-mj="widget-banner-slider"] {
+    border-radius: 16px !important;
+  }
+
+  [data-mj="widget-banner"] {
+    margin-top: 10px !important;
+  }
+}
