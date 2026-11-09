@@ -321,3 +321,8 @@ button[data-mj="sidebar-collapse"][aria-label="arrow_left"] {
 [data-mj="sidebar-group"] {
   border: 1px solid transparent !important;
 }
+
+
+[data-mj="sidebar-nav-list"] > li.app-ltr-10a4mqi {
+  background: transparent !important;
+}
