@@ -316,3 +316,8 @@ button[data-mj="sidebar-collapse"][aria-label="arrow_left"] {
 [data-mj="sidebar-nav"] [data-mj="sidebar-group"]:hover {
   transform: none !important;
 }
+
+
+[data-mj="sidebar-group"] {
+  border: 1px solid transparent !important;
+}
