@@ -334,3 +334,14 @@ button[data-mj="sidebar-collapse"][aria-label="arrow_left"] {
   width: 100% !important;
   margin: 0 0 16px !important;
 }
+
+
+[data-youcan-product-widget-mount="page-top"] {
+  position: relative !important;
+  z-index: 2 !important;
+  display: block !important;
+  width: 100% !important;
+  min-height: 1px !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
