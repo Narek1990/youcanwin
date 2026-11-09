@@ -303,3 +303,16 @@ button[data-mj="sidebar-collapse"][aria-label="arrow_left"] {
 [data-mj="sidebar-nav"] [data-mj="sidebar-group"]:hover > span:first-child {
   filter: brightness(1.25) drop-shadow(0 0 5px rgba(232, 195, 92, 0.28)) !important;
 }
+
+
+/* Keep sidebar hover borders inside the sidebar bounds */
+[data-mj="sidebar-nav"] .sl-navlink,
+[data-mj="sidebar-nav"] [data-mj="sidebar-group"] {
+  box-sizing: border-box !important;
+  max-width: 100% !important;
+}
+
+[data-mj="sidebar-nav"] .sl-navlink:hover,
+[data-mj="sidebar-nav"] [data-mj="sidebar-group"]:hover {
+  transform: none !important;
+}
