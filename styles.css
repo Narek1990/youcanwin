@@ -244,3 +244,8 @@ button[data-mj="sidebar-collapse"][aria-label="arrow_left"] {
   box-sizing: border-box !important;
   padding-left: 58px !important;
 }
+
+
+[data-mj="widget-banner"] {
+  margin-top: 60px !important;
+}
