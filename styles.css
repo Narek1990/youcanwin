@@ -249,3 +249,15 @@ button[data-mj="sidebar-collapse"][aria-label="arrow_left"] {
 [data-mj="widget-banner"] {
   margin-top: 60px !important;
 }
+
+
+/* Banner spacing only on mobile */
+[data-mj="widget-banner"] {
+  margin-top: 0 !important;
+}
+
+@media (max-width: 767px) {
+  [data-mj="widget-banner"] {
+    margin-top: 60px !important;
+  }
+}
