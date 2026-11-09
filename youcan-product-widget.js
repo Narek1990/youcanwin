@@ -1,4 +1,4 @@
-/*! YouCan Product Widget v1.0.0 | Self-contained, no dependencies */
+/*! YouCan Product Widget v1.1.0 | Self-contained, no dependencies */
 (function () {
   'use strict';
   var script = document.currentScript;
@@ -120,13 +120,36 @@
     var api = { target: target, element: host, select: select, destroy: function () { abort.abort(); if (observer) observer.disconnect(); host.remove(); instances.delete(api); } };
     instances.add(api); return api;
   }
-  window.YouCanProductWidget = { version: '1.0.0', mount: mount, destroyAll: function () { Array.from(instances).forEach(function (i) { i.destroy(); }); } };
+  window.YouCanProductWidget = { version: '1.1.0', mount: mount, destroyAll: function () { Array.from(instances).forEach(function (i) { i.destroy(); }); } };
   function autoMount() {
     if (script && script.dataset.manual === 'true') return;
     var cfg = window.YOUCAN_PRODUCT_WIDGET_CONFIG || {};
     var target = cfg.target || (script && script.dataset.target);
-    if (target) { if (!document.querySelector(target)) { console.warn('YouCan widget: target not found:', target); return; } mount(target, cfg); }
-    else if (script && script.parentNode) { var container = node('div'); script.insertAdjacentElement('beforebegin', container); mount(container, cfg); }
+
+    if (target) {
+      if (!document.querySelector(target)) {
+        console.warn('YouCan widget: target not found:', target);
+        return;
+      }
+      mount(target, cfg);
+      return;
+    }
+
+    var pageContent = document.querySelector('[data-mj="page-content"]');
+
+    if (pageContent) {
+      var pageTop = node('div');
+      pageTop.setAttribute('data-youcan-product-widget-mount', 'page-top');
+      pageContent.insertBefore(pageTop, pageContent.firstChild);
+      mount(pageTop, cfg);
+      return;
+    }
+
+    if (script && script.parentNode) {
+      var fallback = node('div');
+      script.insertAdjacentElement('beforebegin', fallback);
+      mount(fallback, cfg);
+    }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', autoMount, { once: true }); else autoMount();
 })();
