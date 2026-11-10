@@ -1,8 +1,8 @@
-/*! YouCan Product Widget v1.5.0 | Self-contained, no dependencies */
+/*! YouCan Product Widget v1.6.0 | Self-contained, no dependencies */
 (function () {
   'use strict';
   var script = document.currentScript;
-  if (window.YouCanProductWidget && window.YouCanProductWidget.version === '1.5.0') return;
+  if (window.YouCanProductWidget && window.YouCanProductWidget.version === '1.6.0') return;
   if (window.YouCanProductWidget && typeof window.YouCanProductWidget.destroyAll === 'function') {
     window.YouCanProductWidget.destroyAll();
   }
@@ -123,7 +123,7 @@
     var api = { target: target, element: host, select: select, destroy: function () { abort.abort(); if (observer) observer.disconnect(); host.remove(); instances.delete(api); } };
     instances.add(api); return api;
   }
-  window.YouCanProductWidget = { version: '1.5.0', mount: mount, destroyAll: function () { Array.from(instances).forEach(function (i) { i.destroy(); }); } };
+  window.YouCanProductWidget = { version: '1.6.0', mount: mount, destroyAll: function () { Array.from(instances).forEach(function (i) { i.destroy(); }); } };
   var autoMountObserver = null;
 
   function isHomePage() {
@@ -287,6 +287,51 @@
     window.addEventListener("popstate", sync);
     window.addEventListener("hashchange", sync);
     window.setInterval(sync, 750);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start, { once: true });
+  } else {
+    start();
+  }
+})();
+
+(function syncYouCanWidgetSidebarGap() {
+  var lastMount = null;
+  var lastSidebar = null;
+  var lastOpen = null;
+  var resizeObserver = null;
+
+  function sync() {
+    var mount = document.querySelector(
+      '[data-youcan-product-widget-mount="page-top"]'
+    );
+    var sidebar = document.querySelector('[data-mj="sidebar"]');
+
+    if (!mount || !sidebar) return;
+
+    var isDesktop = window.innerWidth > 767;
+    var sidebarWidth = sidebar.getBoundingClientRect().width;
+    var isOpen = isDesktop && sidebarWidth > 180;
+
+    if (mount !== lastMount || sidebar !== lastSidebar || isOpen !== lastOpen) {
+      mount.setAttribute("data-sidebar-open", String(isOpen));
+      lastMount = mount;
+      lastSidebar = sidebar;
+      lastOpen = isOpen;
+    }
+
+    if (sidebar !== lastSidebar && typeof ResizeObserver !== "undefined") {
+      if (resizeObserver) resizeObserver.disconnect();
+      resizeObserver = new ResizeObserver(sync);
+      resizeObserver.observe(sidebar);
+    }
+  }
+
+  function start() {
+    sync();
+    window.addEventListener("resize", sync);
+    window.setInterval(sync, 500);
   }
 
   if (document.readyState === "loading") {
