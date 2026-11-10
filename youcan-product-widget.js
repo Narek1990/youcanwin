@@ -1,8 +1,8 @@
-/*! YouCan Product Widget v1.6.0 | Self-contained, no dependencies */
+/*! YouCan Product Widget v1.7.0 | Self-contained, no dependencies */
 (function () {
   'use strict';
   var script = document.currentScript;
-  if (window.YouCanProductWidget && window.YouCanProductWidget.version === '1.6.0') return;
+  if (window.YouCanProductWidget && window.YouCanProductWidget.version === '1.7.0') return;
   if (window.YouCanProductWidget && typeof window.YouCanProductWidget.destroyAll === 'function') {
     window.YouCanProductWidget.destroyAll();
   }
@@ -123,7 +123,7 @@
     var api = { target: target, element: host, select: select, destroy: function () { abort.abort(); if (observer) observer.disconnect(); host.remove(); instances.delete(api); } };
     instances.add(api); return api;
   }
-  window.YouCanProductWidget = { version: '1.6.0', mount: mount, destroyAll: function () { Array.from(instances).forEach(function (i) { i.destroy(); }); } };
+  window.YouCanProductWidget = { version: '1.7.0', mount: mount, destroyAll: function () { Array.from(instances).forEach(function (i) { i.destroy(); }); } };
   var autoMountObserver = null;
 
   function isHomePage() {
@@ -247,8 +247,21 @@
 
   function sync() {
     var hidden = !isHomePage() || isGameRoute() || hasGameOverlay();
+    var mounts = document.querySelectorAll(
+      '[data-youcan-product-widget-mount="page-top"]'
+    );
     var widgets = document.querySelectorAll("[data-youcan-product-widget]");
     var ariaValue = String(hidden);
+
+    mounts.forEach(function (mount) {
+      if (mount.classList.contains("is-game-hidden") !== hidden) {
+        mount.classList.toggle("is-game-hidden", hidden);
+      }
+
+      if (mount.getAttribute("aria-hidden") !== ariaValue) {
+        mount.setAttribute("aria-hidden", ariaValue);
+      }
+    });
 
     widgets.forEach(function (widget) {
       if (widget.classList.contains("is-game-hidden") !== hidden) {
