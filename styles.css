@@ -405,3 +405,10 @@ button[data-mj="sidebar-collapse"][aria-label="arrow_left"] {
     padding-left: 0 !important;
   }
 }
+
+
+/* Final page-top widget horizontal padding */
+[data-youcan-product-widget-mount="page-top"],
+[data-youcan-product-widget-mount="page-top"][data-sidebar-open="true"] {
+  padding-left: 13px !important;
+}
