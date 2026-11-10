@@ -177,7 +177,7 @@
 
   autoMount();
   window.setInterval(autoMount, 1000);
-
+})();
 
 (function enhanceYouCanProductWidgetVisibility() {
   var api = window.YouCanProductWidget;
