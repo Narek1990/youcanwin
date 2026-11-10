@@ -25,7 +25,7 @@
   var CSS = `
     :host{display:block;contain:layout style;--yc-gold:#e8c35c;--yc-light:#ffe8b2;--yc-bg:#171b24;--yc-text:#fff;--yc-muted:#aab0bd;font-family:Arial,Helvetica,sans-serif;color:var(--yc-text);color-scheme:dark}
     *{box-sizing:border-box}button,a{-webkit-tap-highlight-color:transparent}button{font:inherit}a{color:inherit;text-decoration:none}button:focus-visible,a:focus-visible{outline:3px solid var(--yc-light);outline-offset:4px}
-    .shell{position:relative;isolation:isolate;max-width:1440px;margin:auto;border-radius:24px;padding:14px;background:linear-gradient(125deg,#202631 0%,#11151c 70%);border:1px solid #ffffff0d;overflow:hidden}
+    .shell{position:relative;isolation:isolate;max-width:1440px;margin:auto;border-radius:16px;padding:14px;background:linear-gradient(125deg,#202631 0%,#11151c 70%);border:1px solid #ffffff0d;overflow:hidden}
     .layout{display:grid;grid-template-columns:minmax(240px,1.2fr) repeat(3,minmax(0,1fr));gap:12px}
     .intro{position:relative;padding:24px 22px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;min-height:282px;overflow:hidden}
     .eyebrow{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--yc-gold);margin:0 0 14px}.brand{font-weight:900;letter-spacing:-1px;font-size:18px;margin-bottom:18px}.brand em{background:linear-gradient(95deg,var(--yc-gold),var(--yc-light),var(--yc-gold));color:#171b24;border-radius:4px;padding:2px 5px;margin-left:3px;font-style:normal;font-size:12px;letter-spacing:0}
