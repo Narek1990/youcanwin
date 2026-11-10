@@ -188,7 +188,10 @@
 
   function isGameRoute() {
     var path = location.pathname.toLowerCase();
-    return /(^|\\/)(game|games|play|launch)(\\/|$)/.test(path);
+    var segments = path.split("/").filter(function (segment) { return segment; });
+    return segments.some(function (segment) {
+      return segment === "game" || segment === "games" || segment === "play" || segment === "launch";
+    });
   }
 
   function hasGameOverlay() {
