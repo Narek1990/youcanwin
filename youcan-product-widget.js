@@ -1,8 +1,8 @@
-/*! YouCan Product Widget v1.4.0 | Self-contained, no dependencies */
+/*! YouCan Product Widget v1.5.0 | Self-contained, no dependencies */
 (function () {
   'use strict';
   var script = document.currentScript;
-  if (window.YouCanProductWidget && window.YouCanProductWidget.version === '1.4.0') return;
+  if (window.YouCanProductWidget && window.YouCanProductWidget.version === '1.5.0') return;
   if (window.YouCanProductWidget && typeof window.YouCanProductWidget.destroyAll === 'function') {
     window.YouCanProductWidget.destroyAll();
   }
@@ -123,7 +123,7 @@
     var api = { target: target, element: host, select: select, destroy: function () { abort.abort(); if (observer) observer.disconnect(); host.remove(); instances.delete(api); } };
     instances.add(api); return api;
   }
-  window.YouCanProductWidget = { version: '1.4.0', mount: mount, destroyAll: function () { Array.from(instances).forEach(function (i) { i.destroy(); }); } };
+  window.YouCanProductWidget = { version: '1.5.0', mount: mount, destroyAll: function () { Array.from(instances).forEach(function (i) { i.destroy(); }); } };
   var autoMountObserver = null;
 
   function isHomePage() {
@@ -184,6 +184,7 @@
   if (!api) return;
 
   var observer = null;
+  var routeMethods = ["pushState", "replaceState"];
 
   function isHomePage() {
     var path = location.pathname.toLowerCase();
@@ -196,6 +197,7 @@
   function isGameRoute() {
     var path = location.pathname.toLowerCase();
     var segments = path.split("/").filter(function (segment) { return segment; });
+
     return segments.some(function (segment) {
       return segment === "game" ||
         segment === "games" ||
@@ -213,10 +215,7 @@
       '[data-mj="game-overlay"]',
       '[data-mj="game-frame"]',
       '[data-mj="game-iframe"]',
-      '[data-mj="game-viewer"]',
-      'iframe[src*="game"]',
-      'iframe[src*="launch"]',
-      'iframe[src*="play"]'
+      '[data-mj="game-viewer"]'
     ];
 
     if (document.querySelector(selectors.join(","))) return true;
@@ -239,20 +238,20 @@
       }
     }
 
-    return false;
+    return Boolean(
+      document.querySelector(
+        'iframe[src*="game"], iframe[src*="launch"], iframe[src*="play"]'
+      )
+    );
   }
 
   function sync() {
     var hidden = !isHomePage() || isGameRoute() || hasGameOverlay();
-    var widgets = document.querySelectorAll(
-      '[data-youcan-product-widget-mount="page-top"] > [data-youcan-product-widget]'
-    );
+    var widgets = document.querySelectorAll("[data-youcan-product-widget]");
     var ariaValue = String(hidden);
 
     widgets.forEach(function (widget) {
-      var currentlyHidden = widget.classList.contains("is-game-hidden");
-
-      if (currentlyHidden !== hidden) {
+      if (widget.classList.contains("is-game-hidden") !== hidden) {
         widget.classList.toggle("is-game-hidden", hidden);
       }
 
@@ -273,7 +272,21 @@
       });
     }
 
-    window.setInterval(sync, 1000);
+    routeMethods.forEach(function (method) {
+      var original = window.history[method];
+      if (typeof original !== "function") return;
+
+      window.history[method] = function () {
+        var result = original.apply(this, arguments);
+        window.dispatchEvent(new Event("youcan:route-change"));
+        return result;
+      };
+    });
+
+    window.addEventListener("youcan:route-change", sync);
+    window.addEventListener("popstate", sync);
+    window.addEventListener("hashchange", sync);
+    window.setInterval(sync, 750);
   }
 
   if (document.readyState === "loading") {
