@@ -314,14 +314,16 @@
     var sidebarWidth = sidebar.getBoundingClientRect().width;
     var isOpen = isDesktop && sidebarWidth > 180;
 
-    if (mount !== lastMount || sidebar !== lastSidebar || isOpen !== lastOpen) {
+    var sidebarChanged = sidebar !== lastSidebar;
+
+    if (mount !== lastMount || sidebarChanged || isOpen !== lastOpen) {
       mount.setAttribute("data-sidebar-open", String(isOpen));
       lastMount = mount;
       lastSidebar = sidebar;
       lastOpen = isOpen;
     }
 
-    if (sidebar !== lastSidebar && typeof ResizeObserver !== "undefined") {
+    if (sidebarChanged && typeof ResizeObserver !== "undefined") {
       if (resizeObserver) resizeObserver.disconnect();
       resizeObserver = new ResizeObserver(sync);
       resizeObserver.observe(sidebar);
