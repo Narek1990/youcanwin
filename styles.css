@@ -381,3 +381,15 @@ button[data-mj="sidebar-collapse"][aria-label="arrow_left"] {
     padding-top: 20px !important;
   }
 }
+
+
+/* Final responsive page-top padding */
+[data-youcan-product-widget-mount="page-top"] {
+  padding-top: 20px !important;
+}
+
+@media (max-width: 767px) {
+  [data-youcan-product-widget-mount="page-top"] {
+    padding-top: 62px !important;
+  }
+}
