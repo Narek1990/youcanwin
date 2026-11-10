@@ -393,3 +393,15 @@ button[data-mj="sidebar-collapse"][aria-label="arrow_left"] {
     padding-top: 62px !important;
   }
 }
+
+
+/* Keep the product widget clear of the expanded desktop sidebar */
+[data-youcan-product-widget-mount="page-top"][data-sidebar-open="true"] {
+  padding-left: 20px !important;
+}
+
+@media (max-width: 767px) {
+  [data-youcan-product-widget-mount="page-top"][data-sidebar-open="true"] {
+    padding-left: 0 !important;
+  }
+}
