@@ -18,11 +18,15 @@
 }
 
 [data-mj="sidebar"] {
-  margin-top: 64px !important;
+  margin-top: 0 !important;
   height: calc(100vh - 64px) !important;
 }
 
 @media (min-width: 992px) {
+  [data-mj="sidebar"] {
+    margin-top: 64px !important;
+  }
+
   [data-mj="content-wrapper"] {
     margin-top: 64px !important;
     max-width: none !important;
