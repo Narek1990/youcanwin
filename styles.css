@@ -9,9 +9,6 @@
   background-color: #191d26 !important;
 }
 
-[aria-label="site-header"].app-ltr-1duwc2 {
-  padding-left: 54px !important;
-}
 
 .app-ltr-i58pjb {
   max-width: none !important;
@@ -246,7 +243,6 @@ button[data-mj="sidebar-collapse"][aria-label="arrow_left"] {
 /* Keep the fixed sidebar icon clear of the header logo */
 [data-mj="logo"].app-ltr-1cg87ht {
   box-sizing: border-box !important;
-  padding-left: 58px !important;
 }
 
 
@@ -400,22 +396,11 @@ button[data-mj="sidebar-collapse"][aria-label="arrow_left"] {
 
 
 /* Keep the product widget clear of the expanded desktop sidebar */
-[data-youcan-product-widget-mount="page-top"][data-sidebar-open="true"] {
-  padding-left: 20px !important;
-}
 
-@media (max-width: 767px) {
-  [data-youcan-product-widget-mount="page-top"][data-sidebar-open="true"] {
-    padding-left: 0 !important;
-  }
-}
 
 
 /* Final page-top widget horizontal padding */
 [data-youcan-product-widget-mount="page-top"],
-[data-youcan-product-widget-mount="page-top"][data-sidebar-open="true"] {
-  padding-left: 13px !important;
-}
 
 
 [class~="wheelWrapper_content__ZLP-C"] {
