@@ -9,15 +9,15 @@
 (function youcanwinRegistrationBannerHover() {
   'use strict';
 
-  var VERSION = '2026-11-13-v3-hover-polish';
+  var VERSION = '2026-11-13-v4-hover-review';
   var STYLE_ID = 'youcanwin-registration-banner-animation-style';
   var ROOT_SELECTOR = '[data-mj="auth-modal"] [data-mj="auth-banner"]';
   var IMAGE_SELECTOR = ROOT_SELECTOR + ' img[alt="banner"]';
-  var MAX_TILT = 5;
-  var MAX_SHIFT = 8;
-  var DEFAULT_ZOOM = 1.045;
-  var HOVER_ZOOM = 1.065;
-  var FIRST_HOVER_ZOOM = 1.11;
+  var MAX_TILT = 2.6;
+  var MAX_SHIFT = 5;
+  var DEFAULT_ZOOM = 1.015;
+  var HOVER_ZOOM = 1.035;
+  var FIRST_HOVER_ZOOM = 1.07;
 
   if (window.__youcanwinRegistrationBannerAnimation) {
     if (window.__youcanwinRegistrationBannerAnimation.version === VERSION) return;
@@ -37,6 +37,7 @@
     originalImageClass: null,
     firstHoverDone: false,
     firstHoverTimer: null,
+    hovering: false,
     current: { x: 0, y: 0, rotateX: 0, rotateY: 0, zoom: DEFAULT_ZOOM },
     target: { x: 0, y: 0, rotateX: 0, rotateY: 0, zoom: DEFAULT_ZOOM }
   };
@@ -96,6 +97,7 @@
   }
 
   function handlePointerEnter() {
+    state.hovering = true;
     state.mountedRoot.classList.add('youcanwin-registration-banner-hovering');
     state.target.zoom = HOVER_ZOOM;
 
@@ -106,7 +108,7 @@
       state.mountedRoot.classList.add('youcanwin-registration-banner-first-hover');
       state.target.zoom = FIRST_HOVER_ZOOM;
       state.firstHoverTimer = window.setTimeout(function () {
-        state.target.zoom = HOVER_ZOOM;
+        state.target.zoom = state.hovering ? HOVER_ZOOM : DEFAULT_ZOOM;
         startRenderLoop();
       }, 720);
     }
@@ -129,6 +131,7 @@
   }
 
   function handlePointerLeave() {
+    state.hovering = false;
     state.target.x = 0;
     state.target.y = 0;
     state.target.rotateX = 0;
@@ -146,7 +149,7 @@
     state.frame = 0;
     if (!state.mountedImage || !state.mountedRoot) return;
 
-    var ease = 0.16;
+    var ease = 0.13;
     state.current.x += (state.target.x - state.current.x) * ease;
     state.current.y += (state.target.y - state.current.y) * ease;
     state.current.rotateX += (state.target.rotateX - state.current.rotateX) * ease;
@@ -173,6 +176,7 @@
     state.frame = 0;
     if (state.firstHoverTimer) window.clearTimeout(state.firstHoverTimer);
     state.firstHoverTimer = null;
+    state.hovering = false;
 
     if (state.mountedRoot) {
       state.mountedRoot.removeEventListener('pointerenter', handlePointerEnter);
@@ -210,18 +214,21 @@
         perspective: 1200px;\
         transform-style: preserve-3d;\
         background: #11151d;\
+        border: 1px solid rgba(255, 211, 70, .28);\
+        box-shadow: 0 0 7px rgba(255, 202, 43, .22);\
+        transition: box-shadow 220ms ease-out, border-color 220ms ease-out;\
       }\
 \
       [data-mj="auth-banner"].youcanwin-registration-banner-stage::before {\
         content: "";\
         position: absolute;\
         z-index: 3;\
-        inset: 1px;\
+        inset: 0;\
         pointer-events: none;\
-        border: 1px solid rgba(255, 211, 70, .68);\
+        border: 1px solid rgba(255, 226, 121, .72);\
         border-radius: 10px;\
         box-shadow: 0 0 8px rgba(255, 202, 43, .42), inset 0 0 12px rgba(255, 215, 83, .2);\
-        opacity: .42;\
+        opacity: .36;\
         transition: opacity 180ms ease-out, box-shadow 220ms ease-out;\
       }\
 \
@@ -232,18 +239,20 @@
         inset: 0;\
         pointer-events: none;\
         border-radius: 10px;\
-        border: 1px solid transparent;\
-        background: linear-gradient(120deg, transparent 34%, rgba(255, 245, 176, .95) 50%, transparent 66%) border-box;\
-        -webkit-mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);\
-        -webkit-mask-composite: xor;\
-        mask-composite: exclude;\
+        border: 2px solid rgba(255, 237, 158, .95);\
+        box-shadow: 0 0 0 1px rgba(255, 186, 23, .72), 0 0 22px rgba(255, 188, 31, .92), inset 0 0 15px rgba(255, 235, 151, .35);\
         opacity: 0;\
-        transform: translateX(-24%);\
+        transform: scale(.985);\
       }\
 \
       [data-mj="auth-banner"].youcanwin-registration-banner-stage.youcanwin-registration-banner-hovering::before {\
-        opacity: .92;\
-        box-shadow: 0 0 16px rgba(255, 202, 43, .76), inset 0 0 18px rgba(255, 215, 83, .28);\
+        opacity: .98;\
+        box-shadow: 0 0 18px rgba(255, 202, 43, .82), inset 0 0 18px rgba(255, 215, 83, .28);\
+      }\
+\
+      [data-mj="auth-banner"].youcanwin-registration-banner-stage.youcanwin-registration-banner-hovering {\
+        border-color: rgba(255, 226, 121, .8);\
+        box-shadow: 0 0 16px rgba(255, 202, 43, .54), 0 0 32px rgba(255, 173, 23, .22);\
       }\
 \
       [data-mj="auth-banner"].youcanwin-registration-banner-stage.youcanwin-registration-banner-first-hover::after {\
@@ -288,9 +297,9 @@
       }\
 \
       @keyframes youcanwin-registration-banner-border-sweep {\
-        0% { opacity: 0; transform: translateX(-24%); }\
-        28% { opacity: .95; }\
-        100% { opacity: .18; transform: translateX(24%); }\
+        0% { opacity: 0; transform: scale(.985); }\
+        28% { opacity: 1; transform: scale(1); }\
+        100% { opacity: .22; transform: scale(1.008); }\
       }\
     ';
     document.head.appendChild(style);
