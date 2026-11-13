@@ -9,12 +9,15 @@
 (function youcanwinRegistrationBannerHover() {
   'use strict';
 
-  var VERSION = '2026-11-13-v2-hover';
+  var VERSION = '2026-11-13-v3-hover-polish';
   var STYLE_ID = 'youcanwin-registration-banner-animation-style';
   var ROOT_SELECTOR = '[data-mj="auth-modal"] [data-mj="auth-banner"]';
   var IMAGE_SELECTOR = ROOT_SELECTOR + ' img[alt="banner"]';
-  var MAX_TILT = 4;
-  var MAX_SHIFT = 6;
+  var MAX_TILT = 5;
+  var MAX_SHIFT = 8;
+  var DEFAULT_ZOOM = 1.045;
+  var HOVER_ZOOM = 1.065;
+  var FIRST_HOVER_ZOOM = 1.11;
 
   if (window.__youcanwinRegistrationBannerAnimation) {
     if (window.__youcanwinRegistrationBannerAnimation.version === VERSION) return;
@@ -32,8 +35,10 @@
     originalImageStyle: null,
     originalRootClass: null,
     originalImageClass: null,
-    current: { x: 0, y: 0, rotateX: 0, rotateY: 0 },
-    target: { x: 0, y: 0, rotateX: 0, rotateY: 0 }
+    firstHoverDone: false,
+    firstHoverTimer: null,
+    current: { x: 0, y: 0, rotateX: 0, rotateY: 0, zoom: DEFAULT_ZOOM },
+    target: { x: 0, y: 0, rotateX: 0, rotateY: 0, zoom: DEFAULT_ZOOM }
   };
 
   window.__youcanwinRegistrationBannerAnimation = {
@@ -72,8 +77,8 @@
     state.originalImageStyle = image.getAttribute('style');
     state.originalRootClass = root.className;
     state.originalImageClass = image.className;
-    state.current = { x: 0, y: 0, rotateX: 0, rotateY: 0 };
-    state.target = { x: 0, y: 0, rotateX: 0, rotateY: 0 };
+    state.current = { x: 0, y: 0, rotateX: 0, rotateY: 0, zoom: DEFAULT_ZOOM };
+    state.target = { x: 0, y: 0, rotateX: 0, rotateY: 0, zoom: DEFAULT_ZOOM };
 
     root.classList.add('youcanwin-registration-banner-stage');
     image.classList.add('youcanwin-registration-banner-image');
@@ -92,6 +97,19 @@
 
   function handlePointerEnter() {
     state.mountedRoot.classList.add('youcanwin-registration-banner-hovering');
+    state.target.zoom = HOVER_ZOOM;
+
+    // The first hover gets the stronger zoom-in seen in the reference motion,
+    // then settles back to the normal hover scale.
+    if (!state.firstHoverDone) {
+      state.firstHoverDone = true;
+      state.mountedRoot.classList.add('youcanwin-registration-banner-first-hover');
+      state.target.zoom = FIRST_HOVER_ZOOM;
+      state.firstHoverTimer = window.setTimeout(function () {
+        state.target.zoom = HOVER_ZOOM;
+        startRenderLoop();
+      }, 720);
+    }
     startRenderLoop();
   }
 
@@ -101,10 +119,12 @@
     var x = clamp((event.clientX - rect.left) / rect.width, 0, 1);
     var y = clamp((event.clientY - rect.top) / rect.height, 0, 1);
 
-    state.target.x = (x - 0.5) * MAX_SHIFT;
-    state.target.y = (y - 0.5) * MAX_SHIFT;
-    state.target.rotateY = (x - 0.5) * MAX_TILT;
-    state.target.rotateX = (0.5 - y) * MAX_TILT;
+    var centeredX = softCurve(x - 0.5);
+    var centeredY = softCurve(y - 0.5);
+    state.target.x = centeredX * MAX_SHIFT;
+    state.target.y = centeredY * MAX_SHIFT;
+    state.target.rotateY = centeredX * MAX_TILT;
+    state.target.rotateX = centeredY * -MAX_TILT;
     startRenderLoop();
   }
 
@@ -113,6 +133,7 @@
     state.target.y = 0;
     state.target.rotateX = 0;
     state.target.rotateY = 0;
+    state.target.zoom = DEFAULT_ZOOM;
     if (state.mountedRoot) state.mountedRoot.classList.remove('youcanwin-registration-banner-hovering');
     startRenderLoop();
   }
@@ -130,10 +151,11 @@
     state.current.y += (state.target.y - state.current.y) * ease;
     state.current.rotateX += (state.target.rotateX - state.current.rotateX) * ease;
     state.current.rotateY += (state.target.rotateY - state.current.rotateY) * ease;
+    state.current.zoom += (state.target.zoom - state.current.zoom) * ease;
 
     state.mountedImage.style.transform =
       'translate3d(' + state.current.x.toFixed(2) + 'px, ' + state.current.y.toFixed(2) + 'px, 0) ' +
-      'scale(1.06) rotateX(' + state.current.rotateX.toFixed(2) + 'deg) ' +
+      'scale(' + state.current.zoom.toFixed(3) + ') rotateX(' + state.current.rotateX.toFixed(2) + 'deg) ' +
       'rotateY(' + state.current.rotateY.toFixed(2) + 'deg)';
     state.mountedRoot.style.setProperty('--youcanwin-pointer-x', (50 + state.current.rotateY * 3) + '%');
     state.mountedRoot.style.setProperty('--youcanwin-pointer-y', (50 - state.current.rotateX * 3) + '%');
@@ -141,13 +163,16 @@
     var settling = Math.abs(state.target.x - state.current.x) > 0.01 ||
       Math.abs(state.target.y - state.current.y) > 0.01 ||
       Math.abs(state.target.rotateX - state.current.rotateX) > 0.01 ||
-      Math.abs(state.target.rotateY - state.current.rotateY) > 0.01;
+      Math.abs(state.target.rotateY - state.current.rotateY) > 0.01 ||
+      Math.abs(state.target.zoom - state.current.zoom) > 0.001;
     if (settling) state.frame = window.requestAnimationFrame(render);
   }
 
   function unmount() {
     if (state.frame) window.cancelAnimationFrame(state.frame);
     state.frame = 0;
+    if (state.firstHoverTimer) window.clearTimeout(state.firstHoverTimer);
+    state.firstHoverTimer = null;
 
     if (state.mountedRoot) {
       state.mountedRoot.removeEventListener('pointerenter', handlePointerEnter);
@@ -187,6 +212,44 @@
         background: #11151d;\
       }\
 \
+      [data-mj="auth-banner"].youcanwin-registration-banner-stage::before {\
+        content: "";\
+        position: absolute;\
+        z-index: 3;\
+        inset: 1px;\
+        pointer-events: none;\
+        border: 1px solid rgba(255, 211, 70, .68);\
+        border-radius: 10px;\
+        box-shadow: 0 0 8px rgba(255, 202, 43, .42), inset 0 0 12px rgba(255, 215, 83, .2);\
+        opacity: .42;\
+        transition: opacity 180ms ease-out, box-shadow 220ms ease-out;\
+      }\
+\
+      [data-mj="auth-banner"].youcanwin-registration-banner-stage::after {\
+        content: "";\
+        position: absolute;\
+        z-index: 4;\
+        inset: 0;\
+        pointer-events: none;\
+        border-radius: 10px;\
+        border: 1px solid transparent;\
+        background: linear-gradient(120deg, transparent 34%, rgba(255, 245, 176, .95) 50%, transparent 66%) border-box;\
+        -webkit-mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);\
+        -webkit-mask-composite: xor;\
+        mask-composite: exclude;\
+        opacity: 0;\
+        transform: translateX(-24%);\
+      }\
+\
+      [data-mj="auth-banner"].youcanwin-registration-banner-stage.youcanwin-registration-banner-hovering::before {\
+        opacity: .92;\
+        box-shadow: 0 0 16px rgba(255, 202, 43, .76), inset 0 0 18px rgba(255, 215, 83, .28);\
+      }\
+\
+      [data-mj="auth-banner"].youcanwin-registration-banner-stage.youcanwin-registration-banner-first-hover::after {\
+        animation: youcanwin-registration-banner-border-sweep 900ms cubic-bezier(.22, .8, .24, 1) both;\
+      }\
+\
       [data-mj="auth-banner"].youcanwin-registration-banner-stage > img.youcanwin-registration-banner-image {\
         display: block;\
         position: relative;\
@@ -223,12 +286,24 @@
           transition: none !important;\
         }\
       }\
+\
+      @keyframes youcanwin-registration-banner-border-sweep {\
+        0% { opacity: 0; transform: translateX(-24%); }\
+        28% { opacity: .95; }\
+        100% { opacity: .18; transform: translateX(24%); }\
+      }\
     ';
     document.head.appendChild(style);
   }
 
   function clamp(value, min, max) {
     return Math.min(max, Math.max(min, value));
+  }
+
+  function softCurve(value) {
+    var sign = value < 0 ? -1 : 1;
+    var magnitude = Math.min(1, Math.abs(value) * 2);
+    return sign * (magnitude * magnitude * (3 - 2 * magnitude)) / 2;
   }
 
   function destroy() {
